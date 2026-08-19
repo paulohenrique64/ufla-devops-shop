@@ -1,0 +1,23 @@
+== Verificação de ambiente -- DevOps na Prática ==
+Sistema detectado: debian
+
+-- Ferramentas --
+[ok]      git         2.53.0
+[ok]      docker      29.5.3
+[ok]      kubectl     1.36.3
+[ok]      kind        0.33.0
+[ok]      helm        3.21.4
+[ok]      terraform   1.15.8
+
+-- Docker em funcionamento --
+[ok]      daemon      respondendo
+[ok]      compose     5.1.4
+
+-- Configuração --
+[ok]      git config  Paulo Henrique <paulohenriquelvs20@gmail.com>
+
+-- Recursos da máquina --
+[ok]      RAM         11 GB
+[ok]      disco       65 GB livres
+
+Ambiente pronto. Bom semestre!

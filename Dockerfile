@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+
+FROM python:3.12-alpine AS build
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+RUN python -m venv /opt/venv
+COPY requirements.txt .
+RUN /opt/venv/bin/pip install -r requirements.txt \
+ && /opt/venv/bin/pip uninstall -y pip \
+ && find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} +
+
+
+FROM python:3.12-alpine
+
+ENV PATH=/opt/venv/bin:$PATH \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    SQLITE_PATH=/dados/loja.db
+
+RUN addgroup -S -g 10001 loja \
+ && adduser -S -D -H -u 10001 -G loja -h /app loja \
+ && install -d -o loja -g loja /dados
+
+WORKDIR /app
+COPY --from=build /opt/venv /opt/venv
+COPY app/ app/
+COPY static/ static/
+
+USER 10001:10001
+EXPOSE 8000
+
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+
+CMD ["uvicorn", "app:api", "--host", "0.0.0.0", "--port", "8000"]

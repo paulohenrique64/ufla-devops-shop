@@ -1,0 +1,21 @@
+[Unit]
+Description=ufla-devops-shop (API FastAPI servida pelo uvicorn)
+After=network.target postgresql.service redis-server.service redis.service
+
+[Service]
+Type=simple
+User=ufla-shop
+Group=ufla-shop
+WorkingDirectory=/opt/ufla-shop
+EnvironmentFile=/etc/ufla-shop.env
+ExecStart=/opt/ufla-shop/.venv/bin/uvicorn app:api --port 8000 --host 127.0.0.1
+Restart=on-failure
+RestartSec=2
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
